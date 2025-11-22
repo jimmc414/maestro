@@ -8,10 +8,10 @@ from datetime import datetime
 import json
 
 # Set up the Anthropic API client
-anthropic_client = Anthropic(api_key="YOUR ANTHROPIC API KEY")
+anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 # Set up the OpenAI API client
-openai_client = OpenAI(api_key="YOUR OPENAI API KEY")
+openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Set the Claude model to use for the sub-agent
 claude_model = "claude-3-opus-20240229"
@@ -19,7 +19,7 @@ claude_model = "claude-3-opus-20240229"
 # Initialize the Rich Console
 console = Console()
 
-def opus_orchestrator(objective, file_content=None, previous_results=None):
+def opus_orchestrator(objective, file_content=None, previous_results=None, orchestrator_model="Claude Opus"):
     console.print(f"\n[bold]Calling Orchestrator for your objective[/bold]")
     previous_results_text = "\n".join(previous_results) if previous_results else "None"
     if file_content:
@@ -164,9 +164,9 @@ while True:
     previous_results = [result for _, result in task_exchanges]
     if not task_exchanges:
         # Pass the file content only in the first iteration if available
-        opus_result, file_content_for_subagent = opus_orchestrator(objective, file_content, previous_results)
+        opus_result, file_content_for_subagent = opus_orchestrator(objective, file_content, previous_results, orchestrator_model)
     else:
-        opus_result, _ = opus_orchestrator(objective, previous_results=previous_results)
+        opus_result, _ = opus_orchestrator(objective, previous_results=previous_results, orchestrator_model=orchestrator_model)
 
     if "The task is complete:" in opus_result:
         # If Opus indicates the task is complete, exit the loop

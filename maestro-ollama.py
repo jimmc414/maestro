@@ -198,7 +198,9 @@ if "./" in objective or "/" in objective:
 else:
     file_content = None
 
-task_exchanges = []
+# Only initialize task_exchanges if not resuming
+if not continue_from_last_task:
+    task_exchanges = []
 haiku_tasks = []
 
 while True:
